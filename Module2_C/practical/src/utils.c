@@ -17,7 +17,7 @@ void getUserInput(char* buffer) {
     printf("Enter A String: ");
 
     // Use fgets to read input from stdin (check out https://www.w3schools.com/c/c_user_input.php)
-    fgets(buffer, 256, stdin);
+    fgets(buffer, BUF_SIZE, stdin);
 
     // fgets will read the entire line of text from the console after the user hits 'enter'. This includes
     // a hidden character called a newline. We don't want to include this character in our final packet,
@@ -25,9 +25,9 @@ void getUserInput(char* buffer) {
     // to shorten the string to exclude the newline character.
     // (hint: use a loop to inspect each character in the buffer and change the newline to a null terminator)
 
-    for ( int i = 0; i < 256; i++ ) {
-        if (buffer[i] == "\n") {
-            buffer[i] = "\0";
+    for ( int i = 0; i < BUF_SIZE; i++ ) {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
         }
     }
 }
@@ -37,9 +37,11 @@ void parseInput(char* buffer, pkt_t* pkt) {
 
     // Determine the length of the data in the buffer (check out https://man7.org/linux/man-pages/man3/strlen.3.html)
     // <code here>
+    pkt->dataLen = strlen(buffer);
 
     // Set the pkt data pointer at your input buffer
     // <code here>
+    pkt->data = buffer;
 
     // Calculate checksum byte for the data.
     // The checksum is a byte stored in the pkt header.
@@ -58,10 +60,21 @@ void parseInput(char* buffer, pkt_t* pkt) {
     //
     // (hint: you should use a loop here)
     // <code here>
-
+    uint8_t checksum;
+    if (pkt->dataLen == 0) {
+        checksum = 0;
+    } else {
+        checksum = buffer[0];
+        for (int i=1; i < pkt->dataLen; i++) {
+            checksum ^= buffer[i];
+        }
+    }
+    pkt->checksum = checksum;
+    
     // Set the length of the pkt header
     // (hint: check out the pkt_t struct definition)
     // <code here>
+    pkt->hdrLen = 3;
 }
 
 /* DEFINE FOR STEP 4 */
@@ -75,9 +88,13 @@ void printPacket(uint8_t* buffer, uint16_t bufSize) {
     // to properly print your hex values.
     // (hint: you may need to loop through each byte in the array and print them individually)
     // <code here>
-
+    for ( int i=0; i< bufSize; i++ ) {
+        printf("%x ", buffer[i]);
+    }
+    
     // Print a final "\n" newline character to avoid issues with the console.
     // <code here>
+    printf("\n");
 }
 
 

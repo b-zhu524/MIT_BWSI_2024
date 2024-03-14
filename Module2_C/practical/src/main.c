@@ -47,7 +47,7 @@ int main() {
     /* STEP 1: GET INPUT FROM THE USER */
 
     // First, define a character array of size 256 to hold our input.
-    char input[256];
+    char input[BUF_SIZE];
 
     // Next, go to utils.c and define your "getUserInput" function.
     // Call your "getUserInput" function here, it will use the input buffer you just declared
@@ -75,6 +75,7 @@ int main() {
     // create this memory at runtime. You'll have to use malloc (https://man7.org/linux/man-pages/man3/malloc.3.html)
     // to create a pointer to a new buffer of the correct size (hdrLen + dataLen)
     // <code here>
+    int* bufferPointer = (int*) malloc(packet->hdrLen + packet->dataLen);
 
     // Transfer data from the pkt struct we built into this new buffer
     // Remember the structure of the packet
@@ -86,6 +87,7 @@ int main() {
     // (hint: try using memcpy [https://man7.org/linux/man-pages/man3/memcpy.3.html],
     // you may have to copy struct fields over individually, think about why?)
     // <code here>
+    memcpy(bufferPointer, input, sizeof(bufferPointer));
 
     /* END STEP 3: Your packet should now be loaded into a buffer of continuous memory */
 
@@ -95,6 +97,7 @@ int main() {
     // then use printf to print the buffer to the commandline. Implement the printPacket function in utils.c below
     // and call it here
     // <code here>
+    printPacket(bufferPointer, sizeof(bufferPointer));
 
     /* END STEP 4: compile and run your executable, your input will be encoded then printed to the console as a
      * sequence of bytes */
